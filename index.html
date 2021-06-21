@@ -41,12 +41,13 @@ function GenerateTrigger(buildStep, secondsDelayed) {
   var igtSecondsDelayed = Math.floor((parseInt(time[0]*60) + parseInt(time[1]) + parseInt(secondsDelayed)) * 1.5);
   var textShortName = buildStep.text.substr(buildStep.text);
   return `Trigger("Force 1"){
-  Conditions:
-    Elapsed Time(At least, ${igtSecondsDelayed});
-  Actions:
-    Display Text Message(Always Display, "${textShortName}");
-  }
-  `
+Conditions:
+  Elapsed Time(At least, ${igtSecondsDelayed});
+Actions:
+  Display Text Message(Always Display, "${textShortName}");
+  Play WAV("sound\\Misc\\Transmission.wav", 179);
+}
+`
 }
 
 function GenerateTriggers() {
@@ -54,10 +55,20 @@ function GenerateTriggers() {
   var obj = JSON.parse(inputVal)
   var i;
   var outputStr = "";
+
+  var firstTrigger = `Trigger("Force 1"){
+Conditions:
+  Elapsed Time(At least, 0);
+Actions:
+  Set Resources("Current Player", Set To, 50, ore);
+}
+`;
+
   for (i = 0; i < obj.buildSteps.length; i++) {
     outputStr += GenerateTrigger(obj.buildSteps[i], obj.secondsDelayed);
   }	
-  document.getElementById("output").innerHTML = 'Trigger("Force 1"){Conditions:	Elapsed Time(At least, 0); Actions: Set Resources("Current Player", Set To, 50, ore);}' + outputStr;
+  document.getElementById("output").innerHTML = firstTrigger + outputStr;
+
   return inputVal
 }
 
